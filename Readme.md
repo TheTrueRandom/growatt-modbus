@@ -7,8 +7,8 @@ Parsing is based on the documentation "Growatt Inverter Modbus RTU Protocol_II" 
 Connect the pin 3 and 4 (modbus A and B) of the growatt COM connector to a modbus to serial converter (e.g. rs485 to TTL converter). 
 Multiple inverters can be connected to the same converter. Make sure to provide the correct modbusId for each inverter. 
 The modbusId can be changed in the configuration menu of the inverter (default: 1).  
-![](doc/com.jpg)
-![](doc/raspberry.jpg)
+<img src="doc/com.jpg" height="300"/>
+<img src="doc/raspberry.jpg" height="300"/>
 
 ## Installation
 ```shell
@@ -32,8 +32,7 @@ import GrowattClient from 'growatt-modbus';
 ```
 
 ## Output Example
-
-![](doc/output.png)
+<img src="doc/output.png" width="500"/>
 
 ## Tested devices
 - [x] Growatt MIC 2500TL-X
