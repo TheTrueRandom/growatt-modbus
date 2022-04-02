@@ -1,0 +1,19 @@
+{
+  "name": "growatt-modbus",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "license": "BSD",
+  "type": "module",
+  "dependencies": {
+    "modbus-serial": "^8.0.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheTrueRandom/growatt-modbus.git"
+  },
+  "keywords": [
+    "modbus",
+    "growatt",
+    "rs485"
+  ]
+}
