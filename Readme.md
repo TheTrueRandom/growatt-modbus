@@ -41,10 +41,4 @@ import GrowattClient from 'growatt-modbus';
 
 ## Contributing
 
-The parsed data is far from everything the inverter provides but enough for my needs right now. Feel free to open a PR to support information. 
-
-<style type="text/css">
-    img {
-        width: 300px;
-    }
-</style>
+The parsed data is far from everything the inverter provides but enough for my needs right now. Feel free to open a PR to support information.
