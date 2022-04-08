@@ -27,6 +27,13 @@ class GrowattClient {
     }
 
     async getData() {
+        const inputRegisters = await this.client.readInputRegisters(0, 125);
+        const holdingRegisters = await this.client.readHoldingRegisters(0, 100);
+        return GrowattClient.parseData(inputRegisters, holdingRegisters);
+
+    }
+
+    static parseData(inputRegisters, holdingRegisters) {
         const statusMap = {
             0: 'Waiting',
             1: 'Normal',
@@ -43,8 +50,7 @@ class GrowattClient {
             407: 'Auto test didn’t pass.'
         }
 
-        const {data} = await this.client.readInputRegisters(0, 125);
-        const holdingData = await this.client.readHoldingRegisters(0, 100);
+        const {data} = inputRegisters;
 
         return {
             status: statusMap[data[0]] || data[0],
@@ -73,7 +79,7 @@ class GrowattClient {
             inverterOutputPf: data[100], //powerfactor 0-20000
             error: errorMap[data[105]] || data[105],
             realPowerPercent: data[113], //% 0-100
-            serialNumber: holdingData.buffer.slice(46, 56).toString()
+            serialNumber: holdingRegisters.buffer.slice(46, 56).toString()
         }
     }
 }
