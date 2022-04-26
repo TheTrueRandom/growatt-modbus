@@ -1,6 +1,6 @@
 {
   "name": "growatt-modbus",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "src/index.js",
   "license": "BSD",
   "type": "module",

@@ -28,7 +28,7 @@ class GrowattClient {
 
     async getData() {
         const inputRegisters = await this.client.readInputRegisters(0, 125);
-        const holdingRegisters = await this.client.readHoldingRegisters(0, 100);
+        const holdingRegisters = await this.client.readHoldingRegisters(23, 8);
         return GrowattClient.parseData(inputRegisters, holdingRegisters);
 
     }
@@ -79,7 +79,7 @@ class GrowattClient {
             inverterOutputPf: data[100], //powerfactor 0-20000
             error: errorMap[data[105]] || data[105],
             realPowerPercent: data[113], //% 0-100
-            serialNumber: holdingRegisters.buffer.slice(46, 56).toString()
+            serialNumber: holdingRegisters.buffer.toString()
         }
     }
 }
