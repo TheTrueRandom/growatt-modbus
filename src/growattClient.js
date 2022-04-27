@@ -28,12 +28,17 @@ class GrowattClient {
 
     async getData() {
         const inputRegisters = await this.client.readInputRegisters(0, 125);
-        const holdingRegisters = await this.client.readHoldingRegisters(23, 8);
-        return GrowattClient.parseData(inputRegisters, holdingRegisters);
-
+        const holdingRegisters = await this.client.readHoldingRegisters(23, 5);
+        return {...GrowattClient.parseInputRegisters(inputRegisters), ...GrowattClient.parseHoldingRegisters(holdingRegisters)};
     }
 
-    static parseData(inputRegisters, holdingRegisters) {
+    static parseHoldingRegisters(holdingRegisters) {
+        return {
+            serialNumber: holdingRegisters.buffer.toString()
+        }
+    }
+
+    static parseInputRegisters(inputRegisters) {
         const statusMap = {
             0: 'Waiting',
             1: 'Normal',
@@ -78,8 +83,7 @@ class GrowattClient {
             ipmTemperature: data[94] / 10.0, //°C
             inverterOutputPf: data[100], //powerfactor 0-20000
             error: errorMap[data[105]] || data[105],
-            realPowerPercent: data[113], //% 0-100
-            serialNumber: holdingRegisters.buffer.toString()
+            realPowerPercent: data[113] //% 0-100
         }
     }
 }
