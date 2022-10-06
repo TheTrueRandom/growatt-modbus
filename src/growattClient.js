@@ -8,20 +8,28 @@ LICENSE file in the root directory of this source tree.
 import ModbusRTU from "modbus-serial";
 
 class GrowattClient {
-    constructor({device = '/dev/ttyAMA0', modbusId = 1, baudRate = 9600} = {}) {
+    constructor({device = '/dev/ttyAMA0', modbusId = 1, baudRate = 9600, ip = "127.0.0.1", port = 8502} = {}) {
         this.device = device;
         this.modbusId = modbusId;
         this.baudRate = baudRate;
+        this.ip = ip;
+        this.port = port;
+        this.client = new ModbusRTU();
     }
 
     async init() {
-        this.client = new ModbusRTU();
         await this.client.connectRTUBuffered(this.device, {
             baudRate: this.baudRate,
             dataBits: 8,
             stopBits: 1,
             parity: 'none'
         });
+        this.client.setID(this.modbusId);
+        this.client.setTimeout(5000);
+    }
+
+    async initTcp() {
+        await this.client.connectTCP(this.ip, {port: this.port});
         this.client.setID(this.modbusId);
         this.client.setTimeout(5000);
     }
@@ -59,26 +67,26 @@ class GrowattClient {
 
         return {
             status: statusMap[data[0]] || data[0],
-            inputPower: data[2] / 10.0, //W
+            inputPower: (data[1] << 16 | data[2]) / 10.0, //W
             pv1Voltage: data[3] / 10.0, //V
             pv1Current: data[4] / 10.0, //A
-            pv1InputPower: data[6] / 10.0, //W
+            pv1InputPower: (data[5] << 16 | data[6]) / 10.0, //W
             pv2Voltage: data[7] / 10.0, //V
             pv2Current: data[8] / 10.0, //A
-            pv2InputPower: data[10] / 10.0, //W
-            outputPower: data[36] / 10, // W
+            pv2InputPower: (data[9] << 16 | data[10]) / 10.0, //W
+            outputPower: (data[35] << 16 | data[36]) / 10, // W
             gridFrequency: data[37] / 100.0, // Hz
             gridVoltage: data[38] / 10.0, //V
             gridOutputCurrent: data[39] / 10.0, //A
-            gridOutputPower: data[42] / 10.0, //VA
-            todayEnergy: data[54] / 10.0, //kWh
-            totalEnergy: data[56] / 10.0, //kWh
-            totalWorkTime: data[58] / 2, //s
-            pv1TodayEnergy: data[60] / 10.0, //kWh
-            pv1TotalEnergy: data[62] / 10.0, //kWh
-            pv2TodayEnergy: data[64] / 10.0, //kWh
-            pv2TotalEnergy: data[66] / 10.0, //kWh
-            pvEnergyTotal: data[92] / 10.0, //kWh
+            gridOutputPower: (data[40] << 16 | data[41]) / 10.0, //VA
+            todayEnergy: (data[53] << 16 | data[54]) / 10.0, //kWh
+            totalEnergy: (data[55] << 16 | data[56]) / 10.0, //kWh
+            totalWorkTime: (data[57] << 16 | data[58]) / 2, //s
+            pv1TodayEnergy: (data[59] << 16 | data[60]) / 10.0, //kWh
+            pv1TotalEnergy: (data[61] << 16 | data[62]) / 10.0, //kWh
+            pv2TodayEnergy: (data[63] << 16 | data[64]) / 10.0, //kWh
+            pv2TotalEnergy: (data[65] << 16 | data[66]) / 10.0, //kWh
+            pvEnergyTotal: (data[91] << 16 | data[92]) / 10.0, //kWh
             inverterTemperature: data[93] / 10.0, //°C
             ipmTemperature: data[94] / 10.0, //°C
             inverterOutputPf: data[100], //powerfactor 0-20000
