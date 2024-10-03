@@ -37,6 +37,7 @@ import GrowattClient from 'growatt-modbus';
 ## Tested devices
 - [x] Growatt MIC 2500TL-X
 - [x] Growatt MIN 4200TL-XE
+- [x] Growatt SPH 10000TL3 BH-UP
 
 
 ## Contributing
