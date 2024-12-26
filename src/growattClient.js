@@ -37,12 +37,37 @@ class GrowattClient {
     async getData() {
         const inputRegisters = await this.client.readInputRegisters(0, 125);
         const holdingRegisters = await this.client.readHoldingRegisters(23, 5);
-        return {...GrowattClient.parseInputRegisters(inputRegisters), ...GrowattClient.parseHoldingRegisters(holdingRegisters)};
+        const batteryRegisters = await this.client.readInputRegisters(1000, 44);
+        return {...GrowattClient.parseInputRegisters(inputRegisters), ...GrowattClient.parseHoldingRegisters(holdingRegisters), ...GrowattClient.parseBatteryRegisters(batteryRegisters)};
     }
 
     static parseHoldingRegisters(holdingRegisters) {
         return {
             serialNumber: holdingRegisters.buffer.toString()
+        }
+    }
+
+    static parseBatteryRegisters(batteryRegisters) {
+	const {data} = batteryRegisters;
+
+        const statusMap = {
+            0: 'Waiting',
+            1: 'Self-test',
+            3: 'Fault Module',
+	    4: 'Flash Module',
+	    5: 'Normal',
+	    6: 'Normal',
+	    7: 'Normal',
+	    8: 'Normal'
+        }
+
+        return {
+            batteryStatus: statusMap[data[0]] || data[0],
+            dischargePower: (data[9] << 16 | data[10]) / 10.0, //W
+            chargePower: (data[11] << 16 | data[12]) / 10.0, //W
+            batteryVoltage: data[13] / 10.0, //V
+            batteryCapacityPercent: data[14], //%
+            batteryTemperature: data[40] / 10.0, //C
         }
     }
 
